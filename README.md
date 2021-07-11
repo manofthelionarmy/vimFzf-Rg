@@ -10,6 +10,8 @@ By using the magic provided by ripgrep and fzf, you can speed up your workflow a
 - Install ripgrep
   
 - Install fzf
+
+- Install bat
   
 Follow their repos directions appropriatley so that the installation goes smoothly.
 

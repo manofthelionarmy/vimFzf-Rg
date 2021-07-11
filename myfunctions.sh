@@ -9,59 +9,78 @@ export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.g
 export BAT_THEME='gruvbox-dark'
 
 function displayFZFFiles {
-    echo $(fzf --preview 'bat --theme=TwoDark --color=always --style=header,grid --line-range :400 {}')
+    echo $(fzf --preview 'bat --theme=gruvbox-dark --color=always --style=header,grid --line-range :400 {}')
 }
 
 function nvimGoToFiles {
-    selection=$(displayFZFFiles)
+    nvimExists=$(which nvim)
+    if [ -z "$nvimExists" ]; then
+      return;
+    fi;
+
+    selection=$(displayFZFFiles);
     if [ -z "$selection" ]; then
         return;
     else
-        nvim $selection
+        nvim $selection;
     fi;
 }
 
 function vimGoToFiles {
-    selection=$(displayFZFFiles)
+    vimExists=$(which vim)
+    if [ -z "$vimExists" ]; then
+      return;
+    fi;
+
+    selection=$(displayFZFFiles);
     if [ -z "$selection" ]; then
         return;
     else
-        vim $selection
+        if [ "$TERM" != "xterm-256color" ]; then
+            TERM="xterm-256color"
+        fi
+        vim $selection;
     fi;
 }
 
 function displayRgPipedFzf {
-    echo $(rg . -n --glob "!.git/" --glob "!vendor/" --glob "!node_modules/" | fzf)
+    echo $(rg . -n --glob "!.git/" --glob "!vendor/" --glob "!node_modules/" | fzf);
 }
 
 function nvimGoToLine {
+    nvimExists=$(which nvim)
+    if [ -z "$nvimExists" ]; then
+      return;
+    fi
     selection=$(displayRgPipedFzf)
     if [ -z "$selection" ]; then
       return;
     else 
-        #nvim $(nvgotoline $selection) +"normal zz"
         filename=$(echo $selection | awk -F ':' '{print $1}')
         line=$(echo $selection | awk -F ':' '{print $2}')
-        nvim $(printf "+%s %s" $line $filename) +"normal zz"
+        nvim $(printf "+%s %s" $line $filename) +"normal zz";
     fi
 }
 
 function vimGoToLine {
+    vimExists=$(which vim)
+    if [ -z "$vimExists" ]; then
+      return;
+    fi
     selection=$(displayRgPipedFzf)
     if [ -z "$selection" ]; then
       return;
     else 
-        #vim $(nvgotoline $selection) +"normal zz"
         filename=$(echo $selection | awk -F ':' '{print $1}')
         line=$(echo $selection | awk -F ':' '{print $2}')
         if [ "$TERM" != "xterm-256color" ]; then
-            TERM="xterm-256color"
-        fi
-        vim $(printf "+%s %s" $line $filename) +"normal zz"
+            TERM="xterm-256color";
+        fi;
+        vim $(printf "+%s %s" $line $filename) +"normal zz";
     fi
 }
 
 alias vf='vimGoToFiles'
 alias nf='nvimGoToFiles'
-alias nvl='nvimGoToLine'
+alias ngl='nvimGoToLine'
 alias vl='vimGoToLine'
