@@ -3,7 +3,7 @@
 export FZF_DEFAULT_OPTS='--color=fg:#f8f8f2,bg:#282a36,hl:#bd93f9 --color=fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9 --color=info:#ffb86c,prompt:#50fa7b,pointer:#ff79c6 --color=marker:#ff79c6,spinner:#ffb86c,header:#6272a4 --height 80% --layout=reverse --border'
 
 # Default command
-export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/" --glob "!node_modules/" --glob "!vendor/"'
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/" --glob "!node_modules/" --glob "!vendor/" --glob "!Steam/" --glob "!snap/" --glob "!.steam/" --glob "!MangoHud/" --glob "!.ccls-cache/"' 
 
 # Preview them using bat
 export BAT_THEME='gruvbox-dark'
@@ -23,6 +23,20 @@ function nvimGoToFiles {
         return;
     else
         nvim $selection;
+    fi;
+}
+
+function lunarvimGoToFiles {
+    lunarVimExists=$(which lvim)
+    if [ -z "$lunarVimExists" ]; then
+      return;
+    fi;
+
+    selection=$(displayFZFFiles);
+    if [ -z "$selection" ]; then
+        return;
+    else
+        lvim $selection;
     fi;
 }
 
@@ -62,6 +76,21 @@ function nvimGoToLine {
     fi
 }
 
+function lunarVimGoToLine {
+    lunarVimExists=$(which lvim)
+    if [ -z "$lunarVimExists" ]; then
+      return;
+    fi
+    selection=$(displayRgPipedFzf)
+    if [ -z "$selection" ]; then
+      return;
+    else 
+        filename=$(echo $selection | awk -F ':' '{print $1}')
+        line=$(echo $selection | awk -F ':' '{print $2}')
+        lvim $(printf "+%s %s" $line $filename) +"normal zz";
+    fi
+}
+
 function vimGoToLine {
     vimExists=$(which vim)
     if [ -z "$vimExists" ]; then
@@ -80,7 +109,13 @@ function vimGoToLine {
     fi
 }
 
+# Go to file aliases
 alias vf='vimGoToFiles'
-alias nf='nvimGoToFiles'
-alias ngl='nvimGoToLine'
+# alias nf='nvimGoToFiles'
+alias nf='lunarvimGoToFiles'
+alias lf='lunarvimGoToFiles'
+# Go to line aliases
+# alias ngl='nvimGoToLine'
+alias ngl='lunarVimGoToLine'
+alias lgl='lunarVimGoToLine'
 alias vl='vimGoToLine'
