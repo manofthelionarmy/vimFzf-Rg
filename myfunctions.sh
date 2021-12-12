@@ -1,9 +1,10 @@
 #!/bin/bash
 # Default opts that set the dracula fzf color theme
-export FZF_DEFAULT_OPTS='--color=fg:#f8f8f2,bg:#282a36,hl:#bd93f9 --color=fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9 --color=info:#ffb86c,prompt:#50fa7b,pointer:#ff79c6 --color=marker:#ff79c6,spinner:#ffb86c,header:#6272a4 --height 80% --layout=reverse --border'
+#export FZF_DEFAULT_OPTS='--color=fg:#f8f8f2,bg:#282a36,hl:#bd93f9 --color=fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9 --color=info:#ffb86c,prompt:#50fa7b,pointer:#ff79c6 --color=marker:#ff79c6,spinner:#ffb86c,header:#6272a4 --height 80% --layout=reverse --border'
+export FZF_DEFAULT_OPTS='--height 80% --layout=reverse --border'
 
 # Default command
-export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/" --glob "!node_modules/" --glob "!vendor/"'
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/" --glob "!node_modules/" --glob "!vendor/" --glob "!undo/" --glob "!plugged/"'
 
 # Preview them using bat
 export BAT_THEME='gruvbox-dark'
@@ -80,7 +81,22 @@ function vimGoToLine {
     fi
 }
 
+function fdFzf {
+	fdExists=$(which fd)
+	if [ -z "$fdExists" ]; then
+					return;
+	else
+		goTo=$(fd -t d . | fzf)
+    if [ -z "$goTo" ]; then
+      return;
+    else 
+      cd $goTo
+    fi
+	fi
+}
+
 alias vf='vimGoToFiles'
 alias nf='nvimGoToFiles'
 alias ngl='nvimGoToLine'
 alias vl='vimGoToLine'
+alias fzd='fdFzf'
