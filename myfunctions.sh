@@ -86,7 +86,16 @@ function fdFzf {
 	if [ -z "$fdExists" ]; then
 					return;
 	else
-		goTo=$(fd -t d . | fzf)
+    if [ "$(pwd)" = "$HOME" ]; then
+      goTo=$(fd -t d -d 1 --hidden . | fzf)
+      if [ -z "$goTo" ]; then
+        return;
+      else 
+        cd $goTo
+        return;
+      fi
+    fi
+    goTo=$(fd -t d . | fzf)
     if [ -z "$goTo" ]; then
       return;
     else 
