@@ -87,7 +87,7 @@ function fdFzf {
 					return;
 	else
     if [ "$(pwd)" = "$HOME" ]; then
-      goTo=$(fd -t d -d 1 --hidden . | fzf)
+      goTo=$(fd -t d -d 1 . | fzf)
       if [ -z "$goTo" ]; then
         return;
       else 
@@ -107,5 +107,5 @@ function fdFzf {
 alias vf='vimGoToFiles'
 alias nf='nvimGoToFiles'
 alias ngl='nvimGoToLine'
-alias vl='vimGoToLine'
+alias vgl='vimGoToLine'
 alias fzd='fdFzf'
