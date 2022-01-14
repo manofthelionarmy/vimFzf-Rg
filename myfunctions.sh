@@ -104,8 +104,46 @@ function fdFzf {
 	fi
 }
 
+function tmuxAttachFZF {
+  tmuxExists=$(which tmux)
+  if [ -z "$tmuxExists" ]; then
+    return;
+  fi
+
+  sessions=$(tmux ls)
+  if [ -z "$sessions" ]; then
+    return;
+  fi
+
+  selectedSession=$(echo $sessions | awk -F ':' '{print $1}' | fzf)
+  if [ -z "$selectedSession" ]; then
+    return;
+  fi
+  tmux attach -t $selectedSession;
+}
+
+function tmuxKillFZF {
+  tmuxExists=$(which tmux)
+  if [ -z "$tmuxExists" ]; then
+    return;
+  fi
+
+  sessions=$(tmux ls)
+  if [ -z "$sessions" ]; then
+    return;
+  fi
+
+  selectedSession=$(echo $sessions | awk -F ':' '{print $1}' | fzf)
+  if [ -z "$selectedSession" ]; then
+    return;
+  fi
+  tmux kill-session -t $selectedSession;
+}
+
 alias vf='vimGoToFiles'
 alias nf='nvimGoToFiles'
 alias ngl='nvimGoToLine'
 alias vgl='vimGoToLine'
 alias fzd='fdFzf'
+alias ta='tmuxAttachFZF'
+alias tk='tmuxKillFZF'
