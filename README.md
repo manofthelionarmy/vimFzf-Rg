@@ -12,11 +12,3 @@ By using the magic provided by ripgrep and fzf, you can speed up your workflow a
 - Install fzf
 
 - Install bat
-  
-Follow their repos directions appropriatley so that the installation goes smoothly.
-
-# Installation
-
-# todo (make a curl script and pipe to bash, or shell)
-
-
