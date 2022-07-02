@@ -69,7 +69,7 @@ function nvimGoToLine {
     else 
         filename=$(echo $selection | cut -d: -f1)
         line=$(echo $selection | cut -d: -f2)
-        nvim $(printf "+%s %s" $line $filename) +"normal zz";
+        nvim $(printf "+%s %s" $line $filename) +"normal zz^";
     fi
 }
 
