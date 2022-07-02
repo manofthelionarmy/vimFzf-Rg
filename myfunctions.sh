@@ -9,6 +9,16 @@ export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.g
 # Preview them using bat
 export BAT_THEME='gruvbox-dark'
 
+# TODO: make a function that does fzf at root of git project
+#function gitHelper {
+# # check if we are in a git project
+# # https://stackoverflow.com/a/2180367
+# git rev-parse --git-dir 2> /dev/null
+# 
+# # this shows the directory for the root of the git local repo
+# git rev-parse --show-toplevel | echo . | fd -t f | fzf;
+#}
+
 function displayFZFFiles {
     echo $(fzf --preview 'bat --theme=gruvbox-dark --color=always --style=header,grid --line-range :400 {}')
 }
@@ -57,8 +67,8 @@ function nvimGoToLine {
     if [ -z "$selection" ]; then
       return;
     else 
-        filename=$(echo $selection | awk -F ':' '{print $1}')
-        line=$(echo $selection | awk -F ':' '{print $2}')
+        filename=$(echo $selection | cut -d: -f1)
+        line=$(echo $selection | cut -d: -f2)
         nvim $(printf "+%s %s" $line $filename) +"normal zz";
     fi
 }
@@ -140,6 +150,35 @@ function tmuxKillFZF {
   tmux kill-session -t $selectedSession;
 }
 
+function lvimGoToFiles {
+    lvimExists=$(which nvim)
+    if [ -z "$lvimExists" ]; then
+      return;
+    fi;
+
+    selection=$(displayFZFFiles);
+    if [ -z "$selection" ]; then
+        return;
+    else
+        lvim $selection;
+    fi;
+}
+
+function lvimGoToLine {
+    lvimExists=$(which lvim)
+    if [ -z "$lvimExists" ]; then
+      return;
+    fi
+    selection=$(displayRgPipedFzf)
+    if [ -z "$selection" ]; then
+      return;
+    else 
+        filename=$(echo $selection | awk -F ':' '{print $1}')
+        line=$(echo $selection | awk -F ':' '{print $2}')
+        lvim $(printf "+%s %s" $line $filename) +"normal zz";
+    fi
+}
+
 alias vf='vimGoToFiles'
 alias nf='nvimGoToFiles'
 alias ngl='nvimGoToLine'
@@ -147,3 +186,5 @@ alias vgl='vimGoToLine'
 alias fzd='fdFzf'
 alias ta='tmuxAttachFZF'
 alias tk='tmuxKillFZF'
+alias lf='lvimGoToFiles'
+alias lgl='lvimGoToLine'
